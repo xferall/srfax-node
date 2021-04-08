@@ -1,1 +1,1 @@
-export * from './QueueFaxRequestBuilder'
+export * from './QueueFaxRequestBuilder';
