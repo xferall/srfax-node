@@ -1,5 +1,5 @@
 module.exports = {
   rollup(config, options) {
-    return config
-  }
-}
+    return config;
+  },
+};
