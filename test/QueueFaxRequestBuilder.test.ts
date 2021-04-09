@@ -45,6 +45,22 @@ describe('QueueFaxRequestBuilder tests', () => {
     );
   });
 
+  test('invalid date throws', () => {
+    const builder = new QueueFaxRequestBuilder(123, 'blah');
+    builder
+      .setCallerId(0)
+      .setSenderEmail('bob@tom.net')
+      .setFaxType('single')
+      .setToFaxNumber('15555551234');
+
+    const pastDate = new Date();
+    pastDate.setFullYear(2020);
+
+    expect(() => builder.setQueueFaxDateTime(pastDate)).toThrow(
+      'Queue date must be in the future'
+    );
+  });
+
   test('build complete fax request', () => {
     const builder = new QueueFaxRequestBuilder(123, 'blah');
     builder

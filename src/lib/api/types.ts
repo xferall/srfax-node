@@ -27,3 +27,18 @@ export interface QueueFaxResponse {
   Status: 'Success' | 'Failed';
   Result: string;
 }
+
+export interface NotifyRequestParams {
+  FaxDetailsID: number;
+  FileName: string;
+  SentStatus: string;
+  AccountCode?: string;
+  DateQueued: string;
+  DateSent: string;
+  ToFaxNumber: string;
+  Pages: number;
+  Duration: number;
+  RemoteID: string;
+  ErrorCode?: string;
+  Size: number;
+}

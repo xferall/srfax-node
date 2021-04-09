@@ -1,5 +1,6 @@
 import { QueueFaxRequest } from '../request/request';
-
+import path from 'path';
+import fs from 'fs';
 abstract class RequestBuilder<T> {
   protected action: string;
   protected accessId: number;
@@ -140,8 +141,16 @@ export class QueueFaxRequestBuilder extends RequestBuilder<QueueFaxRequest> {
   }
 
   setFileContent(fileContent: string): QueueFaxRequestBuilder {
-    // TODO add methods to ingest file streams or blobs here
     this.fileContent = fileContent;
+    return this;
+  }
+
+  setFile(filePath: string): QueueFaxRequestBuilder {
+    this.fileName = path.basename(filePath);
+    this.fileContent = fs.readFileSync(filePath, {
+      encoding: 'base64',
+      flag: 'r',
+    });
     return this;
   }
 
@@ -151,14 +160,30 @@ export class QueueFaxRequestBuilder extends RequestBuilder<QueueFaxRequest> {
   }
 
   setQueueFaxDate(date: string): QueueFaxRequestBuilder {
-    // TODO must be in format YYYY-MM-DD
     this.queueFaxDate = date;
     return this;
   }
 
   setQueueFaxTime(time: string): QueueFaxRequestBuilder {
-    // TODO must be in format HH:MM and set with Date
     this.queueFaxTime = time;
+    return this;
+  }
+
+  setQueueFaxDateTime(date: Date): QueueFaxRequestBuilder {
+    if (date < new Date()) {
+      throw new Error('Queue date must be in the future');
+    }
+    const month =
+      date.getMonth() > 9 ? `${date.getMonth()}` : `0${date.getMonth()}`;
+    const day = date.getDate() > 9 ? `${date.getDate()}` : `0${date.getDate()}`;
+    this.queueFaxDate = `${date.getFullYear()}-${month}-${day}`;
+
+    const hours =
+      date.getHours() > 9 ? `${date.getHours()}` : `0${date.getHours()}`;
+    const minutes =
+      date.getMinutes() > 9 ? `${date.getMinutes()}` : `0${date.getMinutes()}`;
+    this.queueFaxTime = `${hours}:${minutes}`;
+
     return this;
   }
 
