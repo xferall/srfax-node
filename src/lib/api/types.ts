@@ -28,7 +28,7 @@ export interface QueueFaxResponse {
   Result: string;
 }
 
-export interface NotifyRequestParams {
+export interface NotifyRequestResponse {
   FaxDetailsID: number;
   FileName: string;
   SentStatus: string;
