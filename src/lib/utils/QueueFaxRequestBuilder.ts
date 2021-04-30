@@ -1,6 +1,5 @@
 import { QueueFaxRequest } from '../request/request';
-import path from 'path';
-import fs from 'fs';
+import { QueueFaxFileContents, QueueFaxParams } from '../api';
 abstract class RequestBuilder<T> {
   protected action: string;
   protected accessId: number;
@@ -35,14 +34,14 @@ export class QueueFaxRequestBuilder extends RequestBuilder<QueueFaxRequest> {
   private CPOrganization?: string;
   private CPComments?: string;
   private CPSubject?: string;
-  private fileName?: string;
-  private fileContent?: string;
+  private files?: QueueFaxFileContents[];
   private notifyURL?: string;
   private queueFaxDate?: string;
   private queueFaxTime?: string;
 
   constructor(accessId: number, accessPwd: string) {
     super(accessId, accessPwd, 'Queue_Fax');
+    this.files = [];
   }
 
   setCallerId(callerId: number): QueueFaxRequestBuilder {
@@ -135,22 +134,11 @@ export class QueueFaxRequestBuilder extends RequestBuilder<QueueFaxRequest> {
     return this;
   }
 
-  setFileName(fileName: string): QueueFaxRequestBuilder {
-    this.fileName = fileName;
-    return this;
-  }
-
-  setFileContent(fileContent: string): QueueFaxRequestBuilder {
-    this.fileContent = fileContent;
-    return this;
-  }
-
-  setFile(filePath: string): QueueFaxRequestBuilder {
-    this.fileName = path.basename(filePath);
-    this.fileContent = fs.readFileSync(filePath, {
-      encoding: 'base64',
-      flag: 'r',
-    });
+  addFile(name: string, content: string): QueueFaxRequestBuilder {
+    if (!this.files) {
+      this.files = [];
+    }
+    this.files.push({ name, content });
     return this;
   }
 
@@ -197,7 +185,7 @@ export class QueueFaxRequestBuilder extends RequestBuilder<QueueFaxRequest> {
       throw new Error('missing required attribute');
     }
 
-    return new QueueFaxRequest({
+    const params: QueueFaxParams = {
       action: 'Queue_Fax',
       access_id: this.accessId,
       access_pwd: this.accessPwd,
@@ -215,11 +203,11 @@ export class QueueFaxRequestBuilder extends RequestBuilder<QueueFaxRequest> {
       sCPOrganization: this.CPOrganization,
       sCPSubject: this.CPSubject,
       sCPComments: this.CPComments,
-      sFileName_1: this.fileName,
-      sFileContent_1: this.fileContent,
       sNotifyURL: this.notifyURL,
       sQueueFaxDate: this.queueFaxDate,
       sQueueFaxTime: this.queueFaxTime,
-    });
+    };
+
+    return new QueueFaxRequest(params, this.files);
   }
 }

@@ -78,8 +78,7 @@ describe('QueueFaxRequestBuilder tests', () => {
       .setCoverPageOrg('ACME')
       .setCoverPageSubject('Fax')
       .setCoverPageComments('Wiley')
-      .setFileName('fax.pdf')
-      .setFileContent(atob('Fax Data'))
+      .addFile('fax.pdf', atob('test'))
       .setNotifyURL('https://localhost/callback')
       .setQueueFaxDate('2525-01-01')
       .setQueueFaxTime('23:00');

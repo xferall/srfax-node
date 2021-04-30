@@ -1,3 +1,8 @@
+export interface QueueFaxFileContents {
+  name: string;
+  content: string;
+}
+
 export interface QueueFaxParams {
   action: 'Queue_Fax';
   access_id: number;
@@ -16,8 +21,6 @@ export interface QueueFaxParams {
   sCPOrganization?: string;
   sCPSubject?: string;
   sCPComments?: string;
-  sFileName_1?: string;
-  sFileContent_1?: string;
   sNotifyURL?: string;
   sQueueFaxDate?: string;
   sQueueFaxTime?: string;
